@@ -2,6 +2,8 @@
 
 **線上網站**：https://blueet1.github.io/AIot-HW2-MLR-web-/
 
+![網站截圖：多元線性回歸分析系統](docs/screenshot.png)
+
 **CRISP-DM (Cross-Industry Standard Process for Data Mining)** 流程，建置互動式多元線性回歸 (Multiple Linear Regression) 分析與預測系統。
 
 ---
