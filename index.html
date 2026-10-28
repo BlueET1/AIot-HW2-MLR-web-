@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HW2 多元線性回歸 · CRISP-DM</title>
+  <meta name="description" content="以 CRISP-DM 流程完成多元線性回歸分析：特徵選擇、五大假設檢定、95% 信賴區間與預測區間，全部在瀏覽器中計算。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=LXGW+WenKai+TC:wght@400;700&display=swap">
+  <link rel="stylesheet" href="assets/style.css?v=2">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="title-block">
+      <h1>多元線性回歸分析系統 <span class="tag">CRISP-DM</span>
+        <svg class="scribble" viewBox="0 0 440 18" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="M3 11 C 70 4, 150 15, 230 8 S 370 4, 437 10" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M40 15 C 140 10, 260 16, 400 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity=".6"/></svg>
+      </h1>
+    </div>
+    <p class="subtitle">物聯網 HW2 ｜ 特徵選擇・五大假設檢定・95% 信賴區間 / 預測區間 — 所有運算皆於瀏覽器端完成（GitHub Pages 靜態部署）</p>
+  </header>
+
+  <div class="layout">
+    <aside class="panel" id="controls">
+      <section>
+        <h2>資料集與題目</h2>
+        <label for="problem">選擇分析題目（下拉切換兩種 Problem）</label>
+        <select id="problem">
+          <option value="p1">Problem 1：WHO 全球預期壽命（20 Features）</option>
+          <option value="p2">Problem 2：西雅圖國王郡房價（18 → 17 Features）</option>
+          <option value="custom">自訂 CSV 資料集（輸入 URL / 上傳）</option>
+        </select>
+
+        <div id="customBox" hidden>
+          <label for="csvUrl">CSV 檔案 URL</label>
+          <input id="csvUrl" type="url" value="https://raw.githubusercontent.com/Avik-Jain/100-Days-Of-ML-Code/master/datasets/50_Startups.csv">
+          <div class="row">
+            <button id="loadUrl" type="button">載入 URL</button>
+            <label class="file-btn">上傳 CSV<input id="csvFile" type="file" accept=".csv,text/csv"></label>
+          </div>
+          <p class="hint">URL 需允許跨網域讀取（CORS），例如 raw.githubusercontent.com。</p>
+          <label for="target">預測目標變數 (Target)</label>
+          <select id="target"></select>
+          <label>排除欄位（ID 或非特徵）</label>
+          <div id="ignoreList" class="checklist"></div>
+        </div>
+      </section>
+
+      <section>
+        <h2>特徵選擇</h2>
+        <label for="fsMethod">方法</label>
+        <select id="fsMethod">
+          <option value="all">全特徵 (All Features)</option>
+          <option value="rfe" selected>RFE 遞迴特徵消除</option>
+          <option value="kbest">SelectKBest (F-檢定)</option>
+          <option value="lasso">LassoCV (L1 正則化)</option>
+        </select>
+        <div id="kBox">
+          <label for="kFeatures">保留特徵數 k = <output id="kOut"></output></label>
+          <input id="kFeatures" type="range" min="1" step="1">
+        </div>
+      </section>
+
+      <section>
+        <h2>建模設定</h2>
+        <label for="testSize">測試集比例 = <output id="testOut">0.20</output></label>
+        <input id="testSize" type="range" min="0.1" max="0.4" step="0.05" value="0.2">
+        <label for="seed">隨機種子 (Random Seed)</label>
+        <input id="seed" type="number" value="42" step="1">
+        <label for="conf">區間信心水準</label>
+        <select id="conf">
+          <option value="0.10">90%</option>
+          <option value="0.05" selected>95%</option>
+          <option value="0.01">99%</option>
+        </select>
+      </section>
+      <p id="status" class="status" role="status"></p>
+    </aside>
+
+    <main>
+      <nav class="tabs" role="tablist">
+        <button role="tab" data-tab="business" aria-selected="true">1 Business Understanding</button>
+        <button role="tab" data-tab="data">2 Data Understanding</button>
+        <button role="tab" data-tab="prep">3 Data Preparation</button>
+        <button role="tab" data-tab="model">4 Modeling</button>
+        <button role="tab" data-tab="eval">5 Evaluation</button>
+        <button role="tab" data-tab="deploy">6 Deployment</button>
+        <button role="tab" data-tab="ai">AI 協助 / NotebookLM</button>
+      </nav>
+
+      <section class="tab" id="tab-business"></section>
+      <section class="tab" id="tab-data" hidden></section>
+      <section class="tab" id="tab-prep" hidden></section>
+      <section class="tab" id="tab-model" hidden></section>
+      <section class="tab" id="tab-eval" hidden></section>
+      <section class="tab" id="tab-deploy" hidden></section>
+      <section class="tab" id="tab-ai" hidden></section>
+    </main>
+  </div>
+
+  <script src="assets/stats.js?v=2"></script>
+  <script src="assets/app.js?v=2"></script>
+</body>
+</html>
