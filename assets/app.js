@@ -717,7 +717,7 @@
               <li>OLS 信賴區間 / 預測區間公式：CI = ŷ ± t·√(x₀ᵀ Σ̂ x₀)，PI = ŷ ± t·√(x₀ᵀ Σ̂ x₀ + σ̂²)。</li>
               <li>將 Python (statsmodels / scikit-learn) 分析改寫為瀏覽器端 JavaScript，並以 statsmodels 結果交叉驗證數值一致。</li>
             </ul>
-            <p style="margin-bottom:0">完整對話紀錄（PDF）：<a href="docs/HW2-chat-history.pdf" target="_blank" rel="noopener">HW2-chat-history.pdf</a>（純文字版：<a href="docs/HW2-chat-history.txt" target="_blank" rel="noopener">txt</a>）。</p>
+            <p style="margin-bottom:0">完整對話紀錄（PDF）：<a href="docs/HW2-chat-history.pdf" target="_blank" rel="noopener">HW2-chat-history.pdf</a>（文字版：<a href="docs/HW2-chat-history.md" target="_blank" rel="noopener">md</a>）。</p>
           </div>
         </div>
         <div class="card">

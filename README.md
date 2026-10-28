@@ -76,7 +76,7 @@ flowchart TD
 
 ### 2. GPT 輔助內容說明
 * 使用 GPT 設計符合 CRISP-DM 規範的分析架構，並輔助撰寫特徵選擇比較演算法與假設檢定程式碼。
-* 完整對話紀錄：[HW2-chat-history.pdf](docs/HW2-chat-history.pdf)（純文字版：[txt](docs/HW2-chat-history.txt)）。
+* 完整對話紀錄：[HW2-chat-history.pdf](docs/HW2-chat-history.pdf)（文字版：[md](docs/HW2-chat-history.md)）。
 
 ---
 
