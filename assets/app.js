@@ -707,9 +707,9 @@
       $('tab-ai').innerHTML = `
         <h2>AI 協助說明與 NotebookLM 研究摘要</h2>
         <div class="card">
-          <h3 style="margin-top:0">GPT 輔助內容</h3>
+          <h3 style="margin-top:0">Claude Code 輔助內容</h3>
           <div class="callout ai">
-            <p style="margin-top:0"><strong>【GPT 輔助內容】</strong>以下部分在 AI 協助下完成：</p>
+            <p style="margin-top:0"><strong>【Claude Code 輔助內容】</strong>以下部分在 AI 協助下完成：</p>
             <ul>
               <li>依 CRISP-DM 六階段規劃分析架構與網站分頁。</li>
               <li>挑選符合「特徵數 &gt; 13」的 Kaggle 回歸資料集（WHO Life Expectancy、King County House Sales）。</li>
