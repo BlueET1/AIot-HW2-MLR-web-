@@ -1,6 +1,6 @@
 # 物聯網 HW2: 多元線性回歸分析系統 (Multiple Linear Regression)
 
-🌐 **線上網站**：https://<你的 GitHub 帳號>.github.io/<repo 名稱>/
+🌐 **線上網站**：https://blueet1.github.io/AIot-HW2-MLR-web-/
 
 本專案遵循 **CRISP-DM (Cross-Industry Standard Process for Data Mining)** 流程，建置互動式多元線性回歸 (Multiple Linear Regression) 分析與預測系統。
 
