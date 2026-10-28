@@ -1,28 +1,21 @@
 # 物聯網 HW2: 多元線性回歸分析系統 (Multiple Linear Regression)
 
-🌐 **線上網站**：https://blueet1.github.io/AIot-HW2-MLR-web-/
+**線上網站**：https://blueet1.github.io/AIot-HW2-MLR-web-/
 
-本專案遵循 **CRISP-DM (Cross-Industry Standard Process for Data Mining)** 流程，建置互動式多元線性回歸 (Multiple Linear Regression) 分析與預測系統。
+**CRISP-DM (Cross-Industry Standard Process for Data Mining)** 流程，建置互動式多元線性回歸 (Multiple Linear Regression) 分析與預測系統。
 
 ---
 
-## 🌟 專案亮點與作業加分達成情況
+## 作業情況
 
-* **符合核心作業規範**：
   - 選擇 Kaggle 公開資料集：[Life Expectancy (WHO)](https://www.kaggle.com/datasets/kumarrajarshi/life-expectancy-who)
   - 特徵數量：**20 個輸入特徵**（嚴格符合作業 `> 13` 個特徵的限制）。
   - 完整實作**特徵選擇 (Feature Selection)**（包含 Lasso L1 正則化、RFE 遞迴特徵消除、SelectKBest F-檢定）。
   - 模型評估：MSE、RMSE、MAE、$R^2$、Adjusted $R^2$ 與迴歸五大統計假設檢驗。
   - 成果視覺化：**預測圖附帶 95% 信賴區間 (Confidence Interval) 與 95% 預測區間 (Prediction Interval)**。
-* **加分項目滿分 (+3 分)**：
-  -  **加總分 1 分**：側邊欄提供下拉視窗，支援切換兩種跨領域的經典 Problem：
-    1. **Problem 1**：WHO 全球各國預期壽命預測 (20 Features, 公共衛生)
-    2. **Problem 2**：美國西雅圖國王郡房價預測 (18 Features → 移除完全共線的 `sqft_basement` 後 17 Features, 房地產經濟)
-  -  **加總分 2 分**：支援使用者**任意輸入自訂 Dataset CSV URL**（例如作業示範的 50_Startups）或上傳本機 CSV，具備自動欄位型態識別、類別編碼與回歸建模。
-
 ---
 
-## 📊 CRISP-DM 六大分析流程
+## CRISP-DM 分析流程
 
 ```mermaid
 flowchart TD
@@ -75,7 +68,7 @@ flowchart TD
 
 ## 🤖 AI 協助與 NotebookLM 研究摘要
 
-### 1. NotebookLM 網路解法研究摘要（100 字以上）
+### 1. NotebookLM 網路解法研究摘要
 > **摘要主題**：基於世界衛生組織 (WHO) 全球預期壽命資料集的多元回歸分析文獻與網路解法探討
 > 
 > **NotebookLM 研析內容**：
