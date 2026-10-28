@@ -1,0 +1,1426 @@
+
+❯ <ide_opened_file>The user opened the file
+  /Users/chenzhiheng/Desktop/中興電碩一上/物聯網/HW2/describtion.md in the IDE.
+  This may or may not be related to the current task.</ide_opened_file>
+
+❯ 幫我閱讀 @describtion.md  並看一下目前專案做到哪裡了。
+  另外我想要我的網站在github.io 上面部署，不是streamlit
+  ⎿  Read describtion.md (187 lines)
+
+⏺ Bash(cd "/Users/chenzhiheng/Desktop/中興電碩一上/物聯網/HW2" && ls -la && find
+      . -path ./node_modules -prune -o -path ./.venv -prune -o -type f -print |
+      grep -v '/\.' | head…)
+  ⎿  (No output)
+
+⏺ Bash(cd "/Users/chenzhiheng/Desktop/中興電碩一上/物聯網/HW2" && cat README.md
+      requirements.txt .gitignore analysis.py && wc -l data/*.csv && head -2
+      data/*.csv)
+  ⎿  (No output)
+
+  Read 1 file (ctrl+o to expand)
+
+⏺ Bash(cd "/Users/chenzhiheng/Desktop/中興電碩一上/物聯網/HW2" && which node
+      python3; node -v; ls .venv/bin | head; .venv/bin/python -c "import
+      statsmodels,sklearn,pandas;print…)
+  ⎿  (No output)
+
+⏺ Project status is clear. Next I'll check one detail: how the current Streamlit
+  app handles data, so the static version behaves the same.
+
+⏺ Bash(cd "/Users/chenzhiheng/Desktop/中興電碩一上/物聯網/HW2" &&
+      .venv/bin/python - <<'EOF'
+      import pandas as pd…)
+  ⎿  (No output)
+
+⏺ GitHub Pages can't run Python, so I'm converting the site to plain HTML +
+  JavaScript with all the regression math (OLS, CI/PI, RFE, SelectKBest,
+  LassoCV, VIF, assumption tests) running in-browser. Starting with the
+  statistics core.
+
+⏺ Write(assets/stats.js)
+  ⎿  Wrote 556 lines to assets/stats.js
+       1 /*
+       2  * stats.js — 多元線性回歸所需的數值與統計工具（純 JavaScript，
+         無外部相依）
+         區間）、
+       4  *       VIF、SelectKBest、RFE、LassoCV、迴歸診斷檢定。
+       5  */
+       6 (function (root) {
+       8
+       9   // ---------- 亂數與資料切分 ----------
+      10   function mulberry32(seed) {
+     … +602 lines (ctrl+o to expand)
+
+⏺ Now I'll check the math against statsmodels/sklearn on the real data before
+  building the UI, using macOS's built-in JavaScript engine since Node isn't
+  installed:
+
+⏺ Bash(cd "/Users/chenzhiheng/Desktop/中興電碩一上/物聯網/HW2" &&
+      S=/private/tmp/claude-501/-Users-chenzhiheng-Desktop------------HW2/31d69d
+      bd-56a7-4307-9f3a-247732253316/scrat…)
+  ⎿  (No output)
+
+⏺ Validation confirms the JS engine matches statsmodels to 10+ significant
+  digits across coefficients, SE, p-values, R², AIC/BIC, CI/PI, and diagnostic
+  tests, with LassoCV also selecting nearly the same α and feature set. Now I'll
+  check the page itself.
+
+⏺ Write(index.html)
+  ⎿  Wrote 101 lines to index.html
+       1 <!doctype html>
+       3 <head>
+       4   <meta charset="utf-8">
+         le=1">
+       6   <title>HW2 多元線性回歸 · CRISP-DM</title>
+         回歸分析：特徵選擇、五大假設檢定、95% 信賴區間與預測區間，全部在
+         瀏覽器中計算。">
+       9   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/
+         5.4.1/papaparse.min.js"></script>
+         t>
+     … +113 lines (ctrl+o to expand)
+
+⏺ Write(assets/style.css)
+  ⎿  Wrote 136 lines to assets/style.css
+       1 :root {
+       2   --bg: #f6f7f9;
+       3   --surface: #ffffff;
+       4   --text: #1f2933;
+       5   --muted: #5b6673;
+       6   --border: #e1e5ea;
+       7   --accent: #1d4ed8;
+       8   --accent-soft: #e8efff;
+       9   --good: #15803d;
+      10   --good-soft: #dcfce7;
+     … +163 lines (ctrl+o to expand)
+
+⏺ Now the main app logic. It covers the seven tabs, the dataset dropdown, custom
+  URL/upload, and the live simulator:
+
+⏺ Write(assets/app.js)
+  ⎿  Wrote 771 lines to assets/app.js
+      1 /*
+      2  * app.js — 介面與 CRISP-DM 各階段呈現。
+      3  * 資料於瀏覽器端解析、建模，因此可直接部署於 GitHub Pages（無後
+        端）。
+      4  */
+      5 (function () {
+      6   'use strict';
+      7
+      8   const S = window.Stats;
+      9   const $ = id => document.getElementById(id);
+     … +1038 lines (ctrl+o to expand)
+
+⏺ Cleaning up a few rough spots before testing:
+
+⏺ Bash(cd "/Users/chenzhiheng/Desktop/中興電碩一上/物聯網/HW2/assets" && python3
+      - <<'EOF'
+      import re…)
+  ⎿  No matches found
+
+⏺ Now an end-to-end test in headless Chrome, served over a local HTTP server the
+  same way GitHub Pages serves it:
+
+⏺ Bash(cd "/Users/chenzhiheng/Desktop/中興電碩一上/物聯網/HW2" &&
+      S=/private/tmp/claude-501/-Users-chenzhiheng-Desktop------------HW2/31d69d
+      bd-56a7-4307-9f3a-247732253316/scrat…)
+  ⎿  No matches found
+  ⎿  (timeout 2m)
+
+⏺ The first tab loads with no JS errors. To exercise every tab and all three
+  datasets, I'll use a temporary test harness that drives the page in an iframe
+  (deleted afterwards):
+
+⏺ Bash(cd "/Users/chenzhiheng/Desktop/中興電碩一上/物聯網/HW2" &&
+      S=/private/tmp/claude-501/-Users-chenzhiheng-Desktop------------HW2/31d69d
+      bd-56a7-4307-9f3a-247732253316/scrat…)
+  ⎿  (No output)
+  ⎿  (timeout 5m)
+
+⏺ I've found that P2 fails everywhere except Lasso because sqft_living =
+  sqft_above + sqft_basement exactly, making the design matrix singular
+  (statsmodels masks this with a pseudo-inverse). I'll explicitly detect and
+  drop perfectly collinear columns, noting the drop in Data Preparation.
+
+⏺ Update(assets/stats.js)  ⎿  Added 26 lines
+      412      return inv ? inv.map((row, i) => row[i]) : Array(p).fill(I
+           nfinity);
+      413    }
+      414  
+      415 +  // 偵測完全共線欄位：依序以遞增 Cholesky 計算各欄對前面已保 
+          +留欄位回歸後的殘差變異，                                      
+      416 +  // 近乎 0 者（可由其他欄線性組合而成）回報 { index, basis } 
+      417 +  function dependentColumns(X, tol = 1e-9) {                  
+      418 +    const p = X[0].length, n = X.length;                      
+      419 +    const { Z } = standardize(X);                             
+      420 +    const { G } = crossProducts(Z, new Float64Array(n));      
+      421 +    const R = G.map(row => Array.from(row, v => v / n));      
+      422 +    const kept = [], L = [], dropped = [];                    
+      423 +    for (let j = 0; j < p; j++) {                             
+      424 +      const w = [];                                           
+      425 +      for (let a = 0; a < kept.length; a++) {                 
+      426 +        let s = R[kept[a]][j];                                
+      427 +        for (let b = 0; b < a; b++) s -= L[a][b] * w[b];      
+      428 +        w.push(s / L[a][a]);                                  
+      429 +      }                                                       
+      430 +      const resid = R[j][j] - w.reduce((s, v) => s + v * v, 0)
+          +;                                                             
+      431 +      if (resid < tol) {                                      
+      432 +        dropped.push({ index: j, basis: kept.filter((_, a) => 
+          +Math.abs(w[a]) > 1e-6) });                                    
+      433 +      } else {                                                
+      434 +        L.push([...w, Math.sqrt(resid)]);                     
+      435 +        kept.push(j);                                         
+      436 +      }                                                       
+      437 +    }                                                         
+      438 +    return dropped;                                           
+      439 +  }                                                           
+      440 +                                                              
+      441    // ---------- 特徵選擇 ----------
+      442    // f_regression：F = r²/(1-r²)·(n-2)
+      443    function fRegression(X, y) {
+
+⏺ Bash(cd "/Users/chenzhiheng/Desktop/中興電碩一上/物聯網/HW2/assets" && python3
+      - <<'EOF'
+      p='stats.js'; s=open(p).read()…)
+  ⎿  (No output)
+  ⎿  (timeout 5m)
+
+⏺ All 12 dataset × method combinations now run cleanly across all 7 tabs. P2
+  drops to 17 features, which still meets the >13 requirement. Next, a visual
+  check with screenshots:
+
+⏺ Bash(cd "/Users/chenzhiheng/Desktop/中興電碩一上/物聯網/HW2" &&
+      S=/private/tmp/claude-501/-Users-chenzhiheng-Desktop------------HW2/31d69d
+      bd-56a7-4307-9f3a-247732253316/scrat…)
+  ⎿  (No output)
+
+  Read 2 files (ctrl+o to expand)
+
+⏺ Found two issues: the WebGL overlay fails in headless Chrome (and could affect
+  real browsers too), so I'll remove WebGL and downsample large scatter plots
+  instead; and the collinearity message is showing intermediate Cholesky weights
+  rather than actual regression coefficients, obscuring the real relation
+  sqft_basement = sqft_living − sqft_above. I'll fix both next.
+
+⏺ Bash(cd "/Users/chenzhiheng/Desktop/中興電碩一上/物聯網/HW2/assets" && python3
+      - <<'EOF'
+      p='stats.js'; s=open(p).read()…)
+  ⎿  (No output)
+
+  Read 1 file (ctrl+o to expand)
+
+⏺ The model tab looks good, just the coefficient table needs a scroll fix and
+  p-values underflowing to 0 should display as "< 1e-16" instead. I'll make that
+  change, then check the collinearity message.
+
+⏺ Bash(cd "/Users/chenzhiheng/Desktop/中興電碩一上/物聯網/HW2" && python3 -
+      <<'EOF'
+      p='assets/app.js'; s=open(p).read()…)
+  ⎿  (No output)
+
+⏺ Bash(cd "/Users/chenzhiheng/Desktop/中興電碩一上/物聯網/HW2" &&
+      S=/private/tmp/claude-501/-Users-chenzhiheng-Desktop------------HW2/31d69d
+      bd-56a7-4307-9f3a-247732253316/scrat…)
+  ⎿  (No output)
+
+  Read 1 file (ctrl+o to expand)
+
+⏺ The collinearity note now names the right columns. I'll tidy the wording,
+  remove the test harness, and update the README for GitHub Pages:
+
+⏺ Bash(cd "/Users/chenzhiheng/Desktop/中興電碩一上/物聯網/HW2" && python3 -
+      <<'EOF'
+      p='assets/app.js'; s=open(p).read()…)
+  ⎿  (No output)
+
+⏺ Now the README: I'll replace the Streamlit sections with GitHub Pages
+  instructions.
+
+⏺ Bash(cd "/Users/chenzhiheng/Desktop/中興電碩一上/物聯網/HW2" && python3 -
+      <<'EOF'
+      p='README.md'; s=open(p).read()…)
+  ⎿  No matches found
+
+⏺ The site is now a static web page that GitHub Pages can host, and it no longer
+  uses Streamlit. I tested it in headless Chrome: all three datasets work with
+  all four feature-selection methods, across all 7 tabs. It isn't on GitHub yet,
+  because the folder isn't a git repository so far.
+
+  What's already done (from before)
+
+  ┌─────────────────────────────┬───────────────────────────────────────────┐
+  │         Requirement         │                  Status                   │
+  ├─────────────────────────────┼───────────────────────────────────────────┤
+  │ Kaggle dataset with >13     │ ✅ WHO Life Expectancy, 20 features       │
+  │ features                    │                                           │
+  ├─────────────────────────────┼───────────────────────────────────────────┤
+  │ Feature selection and model │ ✅ RFE / SelectKBest / Lasso; R², RMSE,   │
+  │  evaluation                 │ MAE                                       │
+  ├─────────────────────────────┼───────────────────────────────────────────┤
+  │ Prediction plot with        │ ✅ 95% confidence and prediction          │
+  │ intervals                   │ intervals                                 │
+  ├─────────────────────────────┼───────────────────────────────────────────┤
+  │ CRISP-DM write-up           │ ✅ in README.md                           │
+  ├─────────────────────────────┼───────────────────────────────────────────┤
+  │ +1 bonus: dropdown with two │ ✅ adds a second problem, King County     │
+  │  problems                   │ house prices                              │
+  ├─────────────────────────────┼───────────────────────────────────────────┤
+  │ +2 bonus: any dataset URL   │ ✅                                        │
+  ├─────────────────────────────┼───────────────────────────────────────────┤
+  │ Exported GPT chat PDF       │ ❌ not in the project                     │
+  ├─────────────────────────────┼───────────────────────────────────────────┤
+  │ NotebookLM summary          │ ⚠️ the text exists, but nothing shows it  │
+  │                             │ came from NotebookLM                      │
+  └─────────────────────────────┴───────────────────────────────────────────┘
+
+  What I changed
+
+  - Rewrote the site in HTML + JavaScript. Pages can't run Python, so the
+    regression math now runs in the browser: OLS, the 95% intervals, VIF, the
+    three feature-selection methods and the assumption tests.
+    - The results match statsmodels/sklearn to more than 10 significant digits.
+    - Files: index.html, assets/stats.js, assets/app.js, assets/style.css.
+  - Kept the bonus features. The dropdown still switches between the two
+    problems. The custom-dataset option takes a URL as before, and now also
+    accepts an uploaded CSV file.
+  - Fixed a bug in the second problem. In the King County data, sqft_living
+    equals sqft_above + sqft_basement, so the regression can't be solved. The
+    site now drops sqft_basement automatically and says so on the Data
+    Preparation tab. That leaves 17 features, still above the 13 required.
+  - Corrected the method:
+    - Missing values are now filled using only the training data, so the test
+      set doesn't leak into training.
+    - The Durbin-Watson independence test now runs in the data's original order.
+      On the WHO data it now flags autocorrelation, because each country
+      appears in several years.
+  - Added:
+    - A table comparing the four feature-selection strategies.
+    - A chart showing how Lasso chose its penalty.
+    - The share of test points that fall inside the prediction interval: 94.2%
+      for a 95% interval.
+    - A single-feature regression chart with interval bands.
+  - Updated README.md with local preview steps and deployment steps, and added
+    .nojekyll.
+
+  What you need to do
+
+  1. Publish to GitHub Pages. Create a repository on GitHub and push this folder
+     to it; the commands are in the README. Then go to Settings → Pages and
+     choose main / (root). The site will be at
+     https://<your-account>.github.io/<repo>/. I can run git init and make the
+     first commit if you want.
+  2. Replace the NotebookLM summary with your real one. Run NotebookLM yourself
+     and paste its summary into ai() in assets/app.js and into the README. The
+     assignment requires it to come from NotebookLM.
+  3. Add the GPT chat PDF. Export it and put it in docs/; the AI tab says it's
+     there.
+  4. Optional: app.py (the old Streamlit version) and streamlit in
+     requirements.txt are no longer needed. You can delete them, or keep them as
+     the Python version. analysis.py still works as an offline script.
+
+  To preview locally, run python3 -m http.server 8000 and open
+  http://localhost:8000. Opening index.html directly won't load the CSV files.
+
+❯ <ide_opened_file>The user opened the file
+  /Users/chenzhiheng/Desktop/中興電碩一上/物聯網/HW2/README.md in the IDE. This
+  may or may not be related to the current task.</ide_opened_file>
+
+❯ <prompt>
+  <task>
+  Apply this visual style to the user's existing project. Inspect and preserve
+  its stack, copy, routes, and behavior. Follow existing component and styling
+  conventions. Treat framework, library, and page examples in these design
+  instructions as illustrations; they do not require a stack change or new
+  sections. Scope changes to the user's requested work.
+
+  Keep controls keyboard accessible, focus visible, and text legible. Preserve
+  reading order, responsive behavior, and reduced-motion preferences. Verify
+  actual states at the rendered width. The user's stack and content take
+  precedence over illustrative implementation details.
+  </task>
+
+  <design-system>
+  # Sketch
+
+  ## Identity
+
+  Use a shared working sheet with warm paper, handwritten text, pencil-like
+  drawings, blue notes, red corrections, and yellow highlights. Slightly uneven
+  lines and taped references give the page a drawn quality, while consistent
+  spacing keeps it easy to read.
+
+  ## Layout
+
+  Open with a large handwritten statement beside a smaller cluster of notes and
+  a simple line drawing. An irregular underline and a hand-drawn arrow can
+  direct attention toward the main action. Facts, when useful, sit beneath a
+  drawn bracket.
+
+  Arrange longer reading as open thoughts with generous space between them.
+  Features can use small line illustrations beside notes, with a little
+  vertical staggering on wide layouts. Editorial images look like taped
+  references, and a process can sit on a slightly darker irregular paper strip
+  with circled numbers and connecting arrows. Quotes can use outlined speech
+  notes; comparisons can use broad horizontal rows with one highlighted sheet.
+  End with a large red statement above a lightly divided footer.
+
+  Use only the content groups the brief calls for. The working-sheet treatment
+  does not require team doodles, fabricated comments, prices, or a fixed
+  sequence of sections.
+
+  ## Typography
+
+  Use Working Sheet Marker for large statements and headings, bound to "Sketch
+  Working Marker". Use Working Sheet Hand for reading, bound to "Sketch Working
+  Hand". These are separate original drawn fonts. Keep the marker face heavier
+  and the hand face large enough for continuous reading; its base is
+  intentionally larger than a typical sans body face. If these font files are
+  unavailable, choose a legible handwritten pair with the same weight
+  distinction and reassess the line breaks.
+
+  Keep lines loosely spaced and headings slightly irregular. Avoid tight
+  typesetting that makes the handwriting run together. Small rotations belong
+  to selected notes or headings, not every paragraph.
+
+  ## Color and surfaces
+
+  Warm paper carries dark pencil ink. Muted ink supports secondary text;
+  erased-line grey supplies quiet rules. Blue marks annotations, red marks
+  actions and emphasis, and pale yellow supplies highlights. Lighter scraps
+  distinguish a few notes and image mounts.
+
+  Use faint paper grain, uneven thin strokes, irregular corner curves, and
+  small hard offsets. Tape can have torn ends and partial transparency. Keep
+  the page mostly open paper, with each scrap or highlight serving a clear
+  reading purpose.
+
+  ## Components
+
+  Buttons have irregular outlined edges and a small pencil or red offset
+  shadow. Hover can straighten or tilt them slightly while compressing the
+  shadow; press settles onto the page. Use a clear dashed blue focus outline.
+
+  Features and benefits pair small drawings or checks with text. Optional
+  comparison rows use yellow behind the featured choice, while selection
+  changes the action's treatment separately. Disclosures use hand-drawn marks
+  with an obvious open state. Keep real button, link, and disclosure semantics
+  beneath the drawn appearance.
+
+  ## Images
+
+  Use natural-color photographs or artwork inside pale paper mounts, with small
+  rotations and a tape strip near the edge. Contain artwork when its margins
+  matter; crop scenes around the subject. Preserve the photograph's detail
+  instead of converting every image into a drawing. Reserve dimensions, provide
+  useful alternative text, and hide decorative tape, arrows, and doodles from
+  assistive technology.
+
+  ## Motion
+
+  Use very brief changes for button tilt and pressed depth. Keep handwriting,
+  arrows, paper, and sketches still. Reduced motion removes transforms and
+  transitions while preserving visible state feedback. Do not animate strokes
+  drawing themselves across the page.
+
+  ## Responsive behavior
+
+  Start with a single-column working sheet, two-column facts, and two-column
+  footer groups. At 680px, features and references can form two-column groups,
+  facts expand across a row, and comparisons gain a second column. At 1050px,
+  use the full split opening, staggered reference row, horizontal process, and
+  wider comparison ledger. On small screens, reduce rotations and decorative
+  offsets, let notes stack, and keep handwritten reading text generously sized.
+
+  ## Design limits
+
+  Avoid illegible cursive, heavy crumpled-paper textures, dense doodle borders,
+  and polished geometric cards. Drawn marks should direct attention or group
+  content. They must not obscure text, alter the reading order, or make
+  controls look unfinished.
+
+  ## Authoritative tokens
+
+  | CSS variable | Value |
+  | --- | --- |
+  | --dp-color-ground | #f7f2e7 |
+  | --dp-color-ink | #38352f |
+  | --dp-color-ink-muted | #514d44 |
+  | --dp-color-line | #b3ac9d |
+  | --dp-color-accent | #9e3a2e |
+  | --dp-color-annotation | #344c69 |
+  | --dp-color-highlight | #f0dfa0 |
+  | --dp-color-scrap | #fcf8ef |
+  | --dp-typography-reading-face | "Sketch Working Hand", cursive |
+  | --dp-typography-display-face | "Sketch Working Marker", cursive |
+  | --dp-typography-body | 24px |
+  | --dp-typography-reading | 23px |
+  | --dp-typography-detail | 21px |
+  | --dp-spacing-item-gap | 16px |
+  | --dp-radius-control | 9px 4px 17px 5px / 4px 12px 5px 9px |
+  | --dp-border-fine-stroke | 1.5px |
+  | --dp-motion-control | 100ms |
+  </design-system>
+  </prompt>
+
+⏺ I'll restyle the existing static site in place. The structure, copy, controls
+  and behavior stay the same; only the CSS, the font link, a few decorative
+  marks, and the chart colors change.
+
+  The "Sketch Working Hand/Marker" font files don't exist here, and the copy is
+  Traditional Chinese, so I'm using a legible handwritten pair from Google
+  Fonts. LXGW WenKai TC handles the Chinese and Kalam the Latin, with heavier
+  weights for headings. First the stylesheet:
+
+⏺ Write(assets/style.css)
+  ⎿  Added 280 lines, removed 92 lines
+        1  :root {
+        2 -  --bg: #f6f7f9;                                              
+        3 -  --surface: #ffffff;                                         
+        4 -  --text: #1f2933;                                            
+        5 -  --muted: #5b6673;                                           
+        6 -  --border: #e1e5ea;                                          
+        7 -  --accent: #1d4ed8;                                          
+        8 -  --accent-soft: #e8efff;                                     
+        9 -  --good: #15803d;                                            
+       10 -  --good-soft: #dcfce7;                                       
+       11 -  --warn: #a16207;                                            
+       12 -  --warn-soft: #fef3c7;                                       
+       13 -  --bad: #b91c1c;                                             
+       14 -  --bad-soft: #fee2e2;                                        
+       15 -  --radius: 10px;                                             
+       16 -  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", 
+          -"Noto Sans TC", "PingFang TC", sans-serif;                    
+        2 +  --dp-color-ground: #f7f2e7;                                 
+        3 +  --dp-color-ink: #38352f;                                    
+        4 +  --dp-color-ink-muted: #514d44;                              
+        5 +  --dp-color-line: #b3ac9d;                                   
+        6 +  --dp-color-accent: #9e3a2e;                                 
+        7 +  --dp-color-annotation: #344c69;                             
+        8 +  --dp-color-highlight: #f0dfa0;                              
+        9 +  --dp-color-scrap: #fcf8ef;                                  
+       10 +  --dp-color-strip: #efe7d5;                                  
+       11 +  --dp-color-accent-wash: rgba(158, 58, 46, 0.14);            
+       12 +  --dp-color-annotation-wash: rgba(52, 76, 105, 0.1);         
+       13 +                                                              
+       14 +  /* 原設計字體不可用時，以清楚易讀的手寫字型組合替代：Kalam（
+          +拉丁）＋ 霞鶩文楷 TC（中文） */                               
+       15 +  --dp-typography-reading-face: "Sketch Working Hand", "Kalam"
+          +, "LXGW WenKai TC", cursive;                                  
+       16 +  --dp-typography-display-face: "Sketch Working Marker", "Kala
+          +m", "LXGW WenKai TC", cursive;                                
+       17 +  --dp-typography-body: 24px;                                 
+       18 +  --dp-typography-reading: 23px;                              
+       19 +  --dp-typography-detail: 21px;                               
+       20 +                                                              
+       21 +  --dp-spacing-item-gap: 16px;                                
+       22 +  --dp-radius-control: 9px 4px 17px 5px / 4px 12px 5px 9px;   
+       23 +  --dp-radius-sheet: 14px 6px 18px 5px / 6px 16px 7px 12px;   
+       24 +  --dp-radius-note: 5px 16px 7px 14px / 14px 5px 16px 6px;    
+       25 +  --dp-border-fine-stroke: 1.5px;                             
+       26 +  --dp-shadow-offset: 3px 4px 0 rgba(56, 53, 47, 0.13);       
+       27 +  --dp-motion-control: 100ms;                                 
+       28 +                                                              
+       29 +  --paper-grain: url("data:image/svg+xml,%3Csvg xmlns='http://
+          +www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='
+          +n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' n
+          +umOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values=
+          +'0 0 0 0 .22 0 0 0 0 .2 0 0 0 0 .18 0 0 0 .06 0'/%3E%3C/filter
+          +%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%
+          +3E%3C/svg%3E");                                               
+       30  }
+       31  
+       32  * { box-sizing: border-box; }
+       33  
+       34  body {
+       35    margin: 0;
+       23 -  background: var(--bg);                                      
+       24 -  color: var(--text);                                         
+       25 -  line-height: 1.6;                                           
+       36 +  background-color: var(--dp-color-ground);                   
+       37 +  background-image: var(--paper-grain);                       
+       38 +  color: var(--dp-color-ink);                                 
+       39 +  font-family: var(--dp-typography-reading-face);             
+       40 +  font-size: var(--dp-typography-body);                       
+       41 +  line-height: 1.7;                                           
+       42  }
+       43  
+       44 +h1, h2, h3 {                                                  
+       45 +  font-family: var(--dp-typography-display-face);             
+       46 +  font-weight: 700;                                           
+       47 +  line-height: 1.3;                                           
+       48 +}                                                             
+       49 +                                                              
+       50 +:focus-visible {                                              
+       51 +  outline: 2px dashed var(--dp-color-annotation);             
+       52 +  outline-offset: 3px;                                        
+       53 +}                                                             
+       54 +                                                              
+       55 +/* ---------- 開頭 ---------- */                              
+       56  .site-header {
+       29 -  padding: 20px 24px 12px;                                    
+       30 -  background: var(--surface);                                 
+       31 -  border-bottom: 1px solid var(--border);                     
+       57 +  display: flex;                                              
+       58 +  flex-wrap: wrap;                                            
+       59 +  align-items: flex-end;                                      
+       60 +  justify-content: space-between;                             
+       61 +  gap: 20px 40px;                                             
+       62 +  padding: 36px 24px 20px;                                    
+       63 +  max-width: 1500px;                                          
+       64 +  margin: 0 auto;                                             
+       65  }
+       33 -.site-header h1 { margin: 0; font-size: 1.5rem; }             
+       34 -.subtitle { margin: 4px 0 0; color: var(--muted); font-size: 0
+          -.92rem; }                                                     
+       66 +.site-header h1 {                                             
+       67 +  display: inline-block;                                      
+       68 +  position: relative;                                         
+       69 +  margin: 0;                                                  
+       70 +  font-size: clamp(2.1rem, 5vw, 3.3rem);                      
+       71 +  transform: rotate(-0.8deg);                                 
+       72 +}                                                             
+       73 +.site-header h1 .scribble {                                   
+       74 +  position: absolute; left: -2%; bottom: -14px; width: 104%; h
+          +eight: 18px;                                                  
+       75 +  color: var(--dp-color-accent);                              
+       76 +}                                                             
+       77  .tag {
+       36 -  font-size: 0.75rem; vertical-align: middle; padding: 2px 8px
+          -; border-radius: 99px;                                        
+       37 -  background: var(--accent-soft); color: var(--accent); font-w
+          -eight: 600;                                                   
+       78 +  display: inline-block;                                      
+       79 +  font-size: 0.42em; vertical-align: middle; padding: 0 10px; 
+          +margin-left: 6px;                                             
+       80 +  border: var(--dp-border-fine-stroke) solid var(--dp-color-an
+          +notation); border-radius: var(--dp-radius-control);           
+       81 +  color: var(--dp-color-annotation); transform: rotate(3deg); 
+       82  }
+       83 +.subtitle {                                                   
+       84 +  position: relative;                                         
+       85 +  max-width: 520px;                                           
+       86 +  margin: 0;                                                  
+       87 +  padding: 14px 18px 12px;                                    
+       88 +  background: var(--dp-color-scrap);                          
+       89 +  border: var(--dp-border-fine-stroke) solid var(--dp-color-li
+          +ne);                                                          
+       90 +  border-radius: var(--dp-radius-note);                       
+       91 +  box-shadow: var(--dp-shadow-offset);                        
+       92 +  color: var(--dp-color-annotation);                          
+       93 +  font-size: var(--dp-typography-detail);                     
+       94 +  line-height: 1.55;                                          
+       95 +  transform: rotate(1.2deg);                                  
+       96 +}                                                             
+       97 +.subtitle::before {                                           
+       98 +  content: "";                                                
+       99 +  position: absolute; top: -11px; left: 38%; width: 92px; heig
+          +ht: 22px;                                                     
+      100 +  background: rgba(240, 223, 160, 0.72);                      
+      101 +  clip-path: polygon(3% 12%, 97% 0, 100% 40%, 96% 88%, 4% 100%
+          +, 0 55%);                                                     
+      102 +  transform: rotate(-4deg);                                   
+      103 +}                                                             
+      104  
+      105 +/* ---------- 版面 ---------- */                              
+      106  .layout {
+      107    display: grid;
+       42 -  grid-template-columns: 300px minmax(0, 1fr);                
+       43 -  gap: 20px;                                                  
+       44 -  padding: 20px 24px 40px;                                    
+      108 +  grid-template-columns: minmax(0, 1fr);                      
+      109 +  gap: 28px;                                                  
+      110 +  padding: 16px 16px 48px;                                    
+      111    max-width: 1500px;
+      112    margin: 0 auto;
+      113  }
+      114  
+      115  .panel {
+       50 -  position: sticky; top: 16px; align-self: start;             
+       51 -  max-height: calc(100vh - 32px); overflow-y: auto;           
+       52 -  background: var(--surface); border: 1px solid var(--border);
+          - border-radius: var(--radius);                                
+       53 -  padding: 16px;                                              
+      116 +  background: var(--dp-color-scrap);                          
+      117 +  border: var(--dp-border-fine-stroke) solid var(--dp-color-li
+          +ne);                                                          
+      118 +  border-radius: var(--dp-radius-sheet);                      
+      119 +  box-shadow: var(--dp-shadow-offset);                        
+      120 +  padding: 18px 20px;                                         
+      121 +  font-size: var(--dp-typography-detail);                     
+      122  }
+       55 -.panel section + section { border-top: 1px solid var(--border)
+          -; margin-top: 14px; padding-top: 6px; }                       
+       56 -.panel h2 { font-size: 0.95rem; margin: 6px 0 8px; }          
+       57 -.panel label { display: block; font-size: 0.85rem; color: var(
+          ---muted); margin: 10px 0 4px; }                               
+       58 -.panel select, .panel input[type=url], .panel input[type=numbe
+          -r] {                                                          
+       59 -  width: 100%; padding: 7px 8px; border: 1px solid var(--borde
+          -r); border-radius: 6px;                                       
+       60 -  font: inherit; font-size: 0.88rem; background: var(--surface
+          -); color: var(--text);                                        
+      123 +.panel section + section {                                    
+      124 +  margin-top: 18px; padding-top: 8px;                         
+      125 +  border-top: var(--dp-border-fine-stroke) dashed var(--dp-col
+          +or-line);                                                     
+      126  }
+       62 -.panel input[type=range] { width: 100%; }                     
+       63 -.row { display: flex; gap: 8px; margin-top: 8px; }            
+      127 +.panel h2 { font-size: 1.15em; margin: 6px 0 6px; color: var(-
+          +-dp-color-accent); }                                          
+      128 +.panel label { display: block; color: var(--dp-color-ink-muted
+          +); margin: 12px 0 4px; line-height: 1.4; }                    
+      129 +.panel select, .panel input[type=url], .panel input[type=numbe
+          +r], .tab select {                                             
+      130 +  width: 100%; padding: 6px 10px;                             
+      131 +  border: var(--dp-border-fine-stroke) solid var(--dp-color-in
+          +k-muted);                                                     
+      132 +  border-radius: var(--dp-radius-control);                    
+      133 +  background: var(--dp-color-ground); color: var(--dp-color-in
+          +k);                                                           
+      134 +  font: inherit; font-size: 0.9em;                            
+      135 +}                                                             
+      136 +.tab select { width: auto; margin-left: 6px; }                
+      137 +input[type=range] { width: 100%; accent-color: var(--dp-color-
+          +accent); }                                                    
+      138 +output { font-variant-numeric: tabular-nums; }                
+      139 +                                                              
+      140 +.row { display: flex; gap: 12px; margin-top: 10px; }          
+      141  button, .file-btn {
+       65 -  flex: 1; padding: 7px 10px; border-radius: 6px; border: 1px 
+          -solid var(--accent);                                          
+       66 -  background: var(--accent); color: #fff; font: inherit; font-
+          -size: 0.85rem; cursor: pointer; text-align: center;           
+      142 +  flex: 1;                                                    
+      143 +  padding: 6px 14px;                                          
+      144 +  border: var(--dp-border-fine-stroke) solid var(--dp-color-in
+          +k);                                                           
+      145 +  border-radius: var(--dp-radius-control);                    
+      146 +  background: var(--dp-color-scrap); color: var(--dp-color-ink
+          +);                                                            
+      147 +  box-shadow: 3px 3px 0 var(--dp-color-accent);               
+      148 +  font: inherit; font-family: var(--dp-typography-display-face
+          +); font-weight: 700;                                          
+      149 +  cursor: pointer; text-align: center;                        
+      150 +  transition: transform var(--dp-motion-control) ease-out, box
+          +-shadow var(--dp-motion-control) ease-out;                    
+      151  }
+       68 -.panel .file-btn { margin: 0; color: var(--accent); background
+          -: var(--surface); }                                           
+       69 -.file-btn input { display: none; }                            
+       70 -.hint { font-size: 0.78rem; color: var(--muted); margin: 6px 0
+          - 0; }                                                         
+      152 +button:hover, .file-btn:hover { transform: rotate(-1.2deg); bo
+          +x-shadow: 2px 2px 0 var(--dp-color-accent); }                 
+      153 +button:active, .file-btn:active { transform: translate(2px, 2p
+          +x); box-shadow: 0 0 0 var(--dp-color-accent); }               
+      154 +.panel .file-btn { margin: 0; color: var(--dp-color-ink); }   
+      155 +.file-btn input { position: absolute; opacity: 0; width: 1px; 
+          +height: 1px; }                                                
+      156 +.file-btn:focus-within { outline: 2px dashed var(--dp-color-an
+          +notation); outline-offset: 3px; }                             
+      157 +.hint { font-size: 0.85em; color: var(--dp-color-ink-muted); m
+          +argin: 6px 0 0; }                                             
+      158  .checklist {
+       72 -  max-height: 160px; overflow-y: auto; border: 1px solid var(-
+          --border); border-radius: 6px; padding: 4px 8px;               
+      159 +  max-height: 200px; overflow-y: auto; padding: 4px 10px;     
+      160 +  border: var(--dp-border-fine-stroke) dashed var(--dp-color-l
+          +ine); border-radius: var(--dp-radius-note);                   
+      161  }
+       74 -.panel .checklist label { display: flex; gap: 6px; align-items
+          -: center; margin: 2px 0; color: var(--text); }                
+       75 -.status { font-size: 0.82rem; color: var(--muted); margin: 14p
+          -x 0 0; }                                                      
+       76 -.status.error { color: var(--bad); }                          
+      162 +.panel .checklist label { display: flex; gap: 8px; align-items
+          +: center; margin: 4px 0; color: var(--dp-color-ink); }        
+      163 +.checklist input { accent-color: var(--dp-color-accent); width
+          +: 18px; height: 18px; }                                       
+      164 +.status { color: var(--dp-color-annotation); margin: 16px 0 0;
+          + line-height: 1.5; }                                          
+      165 +.status.error { color: var(--dp-color-accent); }              
+      166  
+      167 +/* ---------- 分頁 ---------- */                              
+      168  .tabs {
+       79 -  display: flex; gap: 4px; overflow-x: auto; border-bottom: 1p
+          -x solid var(--border); margin-bottom: 16px;                   
+      169 +  display: flex; gap: 6px; overflow-x: auto; margin-bottom: 24
+          +px; padding-bottom: 4px;                                      
+      170 +  border-bottom: var(--dp-border-fine-stroke) solid var(--dp-c
+          +olor-line);                                                   
+      171  }
+      172  .tabs button {
+       82 -  flex: none; background: none; color: var(--muted); border: n
+          -one; border-bottom: 2px solid transparent;                    
+       83 -  border-radius: 0; padding: 10px 12px; font-size: 0.9rem; whi
+          -te-space: nowrap;                                             
+      173 +  flex: none; position: relative;                             
+      174 +  padding: 8px 12px 10px; border: none; border-radius: 0; box-
+          +shadow: none; background: none;                               
+      175 +  color: var(--dp-color-ink-muted); font-family: var(--dp-typo
+          +graphy-reading-face); font-weight: 400;                       
+      176 +  font-size: var(--dp-typography-detail); white-space: nowrap;
+      177  }
+       85 -.tabs button[aria-selected=true] { color: var(--accent); borde
+          -r-bottom-color: var(--accent); font-weight: 600; }            
+      178 +.tabs button:hover { transform: none; box-shadow: none; color:
+          + var(--dp-color-ink); }                                       
+      179 +.tabs button:active { transform: none; }                      
+      180 +.tabs button[aria-selected=true] { color: var(--dp-color-accen
+          +t); font-family: var(--dp-typography-display-face); font-weigh
+          +t: 700; }                                                     
+      181 +.tabs button[aria-selected=true]::after {                     
+      182 +  content: ""; position: absolute; left: 8px; right: 6px; bott
+          +om: 2px; height: 4px;                                         
+      183 +  background: var(--dp-color-accent); border-radius: 60% 40% 7
+          +0% 30% / 100%;                                                
+      184 +  transform: rotate(-1deg);                                   
+      185 +}                                                             
+      186  
+       87 -.tab h2 { font-size: 1.25rem; margin: 0 0 12px; }             
+       88 -.tab h3 { font-size: 1.05rem; margin: 24px 0 8px; }           
+      187 +/* ---------- 內容 ---------- */                              
+      188 +.tab h2 {                                                     
+      189 +  display: inline-block;                                      
+      190 +  font-size: clamp(1.5rem, 3vw, 2.1rem);                      
+      191 +  margin: 0 0 18px;                                           
+      192 +  transform: rotate(-0.6deg);                                 
+      193 +  background: linear-gradient(transparent 58%, var(--dp-color-
+          +highlight) 58%, var(--dp-color-highlight) 92%, transparent 92%
+          +);                                                            
+      194 +  padding: 0 6px;                                             
+      195 +}                                                             
+      196 +.tab h3 { font-size: 1.15em; margin: 28px 0 10px; color: var(-
+          +-dp-color-ink); }                                             
+      197 +.tab p, .tab li { font-size: var(--dp-typography-reading); }  
+      198 +.tab .hint, .tab label.hint { font-size: var(--dp-typography-d
+          +etail); }                                                     
+      199 +.tab li + li { margin-top: 6px; }                             
+      200 +                                                              
+      201  .card {
+       90 -  background: var(--surface); border: 1px solid var(--border);
+          - border-radius: var(--radius); padding: 16px; margin-bottom: 1
+          -6px;                                                          
+      202 +  background: var(--dp-color-scrap);                          
+      203 +  border: var(--dp-border-fine-stroke) solid var(--dp-color-li
+          +ne);                                                          
+      204 +  border-radius: var(--dp-radius-sheet);                      
+      205 +  box-shadow: var(--dp-shadow-offset);                        
+      206 +  padding: 20px 22px;                                         
+      207 +  margin-bottom: 28px;                                        
+      208  }
+       92 -.grid-2 { display: grid; grid-template-columns: repeat(2, minm
+          -ax(0, 1fr)); gap: 16px; }                                     
+       93 -.metrics { display: grid; grid-template-columns: repeat(auto-f
+          -it, minmax(150px, 1fr)); gap: 12px; margin-bottom: 16px; }    
+       94 -.metric { background: var(--surface); border: 1px solid var(--
+          -border); border-radius: var(--radius); padding: 12px 14px; }  
+       95 -.metric .label { font-size: 0.8rem; color: var(--muted); }    
+       96 -.metric .value { font-size: 1.35rem; font-weight: 650; font-va
+          -riant-numeric: tabular-nums; }                                
+       97 -.metric .sub { font-size: 0.78rem; color: var(--muted); }     
+      209 +.grid-2 { display: grid; grid-template-columns: minmax(0, 1fr)
+          +; gap: 0 28px; }                                              
+      210  
+       99 -.table-wrap { overflow-x: auto; max-height: 520px; overflow-y:
+          - auto; }                                                      
+      100 -table { border-collapse: collapse; width: 100%; font-size: 0.8
+          -4rem; font-variant-numeric: tabular-nums; }                   
+      101 -th, td { padding: 6px 10px; border-bottom: 1px solid var(--bor
+          -der); text-align: right; white-space: nowrap; }               
+      102 -th { position: sticky; top: 0; background: var(--surface); col
+          -or: var(--muted); font-weight: 600; }                         
+      211 +.metrics { display: grid; grid-template-columns: repeat(2, min
+          +max(0, 1fr)); gap: var(--dp-spacing-item-gap); margin-bottom: 
+          +28px; }                                                       
+      212 +.metric {                                                     
+      213 +  background: var(--dp-color-scrap);                          
+      214 +  border: var(--dp-border-fine-stroke) solid var(--dp-color-li
+          +ne);                                                          
+      215 +  border-radius: var(--dp-radius-note);                       
+      216 +  padding: 10px 14px;                                         
+      217 +}                                                             
+      218 +.metric:nth-child(3n+1) { transform: rotate(-0.4deg); }       
+      219 +.metric:nth-child(3n+2) { transform: rotate(0.5deg); }        
+      220 +.metric .label { font-size: var(--dp-typography-detail); color
+          +: var(--dp-color-ink-muted); line-height: 1.35; }             
+      221 +.metric .value {                                              
+      222 +  font-family: var(--dp-typography-display-face); font-weight:
+          + 700;                                                         
+      223 +  font-size: 1.45em; line-height: 1.3; font-variant-numeric: t
+          +abular-nums; overflow-wrap: anywhere;                         
+      224 +}                                                             
+      225 +.metric .sub { font-size: 18px; color: var(--dp-color-annotati
+          +on); line-height: 1.4; }                                      
+      226 +                                                              
+      227 +.table-wrap { overflow-x: auto; max-height: 560px; overflow-y:
+          + auto; }                                                      
+      228 +table { border-collapse: collapse; width: 100%; font-size: var
+          +(--dp-typography-detail); font-variant-numeric: tabular-nums; 
+          +}                                                             
+      229 +th, td { padding: 6px 12px; border-bottom: 1px solid var(--dp-
+          +color-line); text-align: right; white-space: nowrap; }        
+      230 +th {                                                          
+      231 +  position: sticky; top: 0; z-index: 1; background: var(--dp-c
+          +olor-scrap); color: var(--dp-color-annotation);               
+      232 +  font-family: var(--dp-typography-display-face); font-weight:
+          + 700;                                                         
+      233 +  border-bottom: 2px solid var(--dp-color-ink-muted);         
+      234 +}                                                             
+      235  th:first-child, td:first-child { text-align: left; }
+      104 -td.text { text-align: left; white-space: normal; }            
+      236 +td.text { text-align: left; white-space: normal; min-width: 26
+          +0px; }                                                        
+      237 +tr.featured td { background: var(--dp-color-highlight); }     
+      238  
+      106 -.badge { display: inline-block; padding: 1px 8px; border-radiu
+          -s: 99px; font-size: 0.78rem; font-weight: 600; }              
+      107 -.badge.good { background: var(--good-soft); color: var(--good)
+          -; }                                                           
+      108 -.badge.warn { background: var(--warn-soft); color: var(--warn)
+          -; }                                                           
+      109 -.badge.bad { background: var(--bad-soft); color: var(--bad); }
+      110 -.cell-good { background: var(--good-soft); }                  
+      111 -.cell-warn { background: var(--warn-soft); }                  
+      112 -.cell-bad { background: var(--bad-soft); }                    
+      239 +.badge {                                                      
+      240 +  display: inline-block; padding: 0 10px; font-size: 0.9em; li
+          +ne-height: 1.5;                                               
+      241 +  border: var(--dp-border-fine-stroke) solid currentColor; bor
+          +der-radius: var(--dp-radius-control);                         
+      242 +  white-space: nowrap;                                        
+      243 +}                                                             
+      244 +.badge.good { color: var(--dp-color-annotation); }            
+      245 +.badge.warn { color: var(--dp-color-ink); background: var(--dp
+          +-color-highlight); border-color: var(--dp-color-line); }      
+      246 +.badge.bad { color: var(--dp-color-accent); background: var(--
+          +dp-color-accent-wash); }                                      
+      247 +.cell-good { color: var(--dp-color-annotation); }             
+      248 +.cell-warn { background: var(--dp-color-highlight); }         
+      249 +.cell-bad { background: var(--dp-color-accent-wash); color: va
+          +r(--dp-color-accent); }                                       
+      250  
+      114 -.callout { border-left: 4px solid var(--accent); background: v
+          -ar(--accent-soft); padding: 10px 14px; border-radius: 6px; mar
+          -gin: 12px 0; }                                                
+      115 -.callout.ai { border-left-color: #7c3aed; background: #f3e8ff;
+          - }                                                            
+      116 -.callout.nlm { border-left-color: #0f766e; background: #ccfbf1
+          -; }                                                           
+      117 -.plot { width: 100%; min-height: 380px; }                     
+      251 +.callout {                                                    
+      252 +  position: relative;                                         
+      253 +  margin: 18px 0 4px; padding: 14px 18px;                     
+      254 +  border: var(--dp-border-fine-stroke) solid var(--dp-color-an
+          +notation);                                                    
+      255 +  border-radius: var(--dp-radius-note);                       
+      256 +  background: var(--dp-color-annotation-wash);                
+      257 +  color: var(--dp-color-annotation);                          
+      258 +  font-size: var(--dp-typography-reading);                    
+      259 +}                                                             
+      260 +.callout.ai { border-color: var(--dp-color-annotation); }     
+      261 +.callout.nlm {                                                
+      262 +  border-color: var(--dp-color-line); background: var(--dp-col
+          +or-highlight); color: var(--dp-color-ink);                    
+      263 +}                                                             
+      264 +.callout ul { margin: 8px 0; }                                
+      265 +.plot { width: 100%; min-height: 400px; }                     
+      266  
+      119 -.sliders { display: grid; grid-template-columns: repeat(auto-f
+          -ill, minmax(230px, 1fr)); gap: 10px 20px; }                   
+      120 -.sliders label { display: block; font-size: 0.82rem; color: va
+          -r(--muted); }                                                 
+      121 -.sliders input { width: 100%; }                               
+      122 -.sliders output { color: var(--text); font-weight: 600; font-v
+          -ariant-numeric: tabular-nums; }                               
+      267 +.sliders { display: grid; grid-template-columns: minmax(0, 1fr
+          +); gap: 14px 28px; }                                          
+      268 +.sliders label { display: block; font-size: var(--dp-typograph
+          +y-detail); color: var(--dp-color-ink-muted); line-height: 1.4;
+          + }                                                            
+      269 +.sliders output { color: var(--dp-color-accent); font-family: 
+          +var(--dp-typography-display-face); font-weight: 700; }        
+      270  
+      124 -.flow { display: flex; flex-wrap: wrap; gap: 6px; align-items:
+          - center; margin: 8px 0 16px; font-size: 0.85rem; }            
+      125 -.flow span { padding: 4px 10px; border-radius: 99px; backgroun
+          -d: var(--accent-soft); color: var(--accent); }                
+      126 -.flow i { color: var(--muted); font-style: normal; }          
+      271 +/* CRISP-DM 流程條：深色紙條＋圈號＋箭頭 */                   
+      272 +.process {                                                    
+      273 +  list-style: none; margin: 4px 0 30px; padding: 16px 18px;   
+      274 +  display: flex; flex-direction: column; gap: 8px;            
+      275 +  background: var(--dp-color-strip);                          
+      276 +  border: var(--dp-border-fine-stroke) solid var(--dp-color-li
+          +ne);                                                          
+      277 +  border-radius: 4px 22px 6px 18px / 18px 5px 20px 6px;       
+      278 +  counter-reset: step;                                        
+      279 +}                                                             
+      280 +.process li { display: flex; align-items: center; gap: 10px; f
+          +ont-size: var(--dp-typography-detail); margin: 0; }           
+      281 +.process li + li { margin: 0; }                               
+      282 +.process li::before {                                         
+      283 +  counter-increment: step; content: counter(step);            
+      284 +  flex: none; display: inline-grid; place-items: center; width
+          +: 34px; height: 34px;                                         
+      285 +  border: 2px solid var(--dp-color-accent); border-radius: 52%
+          + 48% 55% 45% / 48% 55% 45% 52%;                               
+      286 +  color: var(--dp-color-accent); font-family: var(--dp-typogra
+          +phy-display-face); font-weight: 700;                          
+      287 +}                                                             
+      288 +.process .arrow { display: none; color: var(--dp-color-ink-mut
+          +ed); }                                                        
+      289  
+      128 -a { color: var(--accent); }                                   
+      129 -code { background: #eef1f5; padding: 1px 5px; border-radius: 4
+          -px; font-size: 0.85em; }                                      
+      290 +a { color: var(--dp-color-annotation); text-decoration-thickne
+          +ss: 1.5px; text-underline-offset: 3px; overflow-wrap: anywhere
+          +; }                                                           
+      291 +a:hover { color: var(--dp-color-accent); }                    
+      292 +code {                                                        
+      293 +  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+          + font-size: 0.72em;                                           
+      294 +  background: var(--dp-color-highlight); padding: 1px 6px; bor
+          +der-radius: 3px 6px 4px 5px;                                  
+      295 +}                                                             
+      296  
+      131 -@media (max-width: 900px) {                                   
+      132 -  .layout { grid-template-columns: minmax(0, 1fr); padding: 16
+          -px; }                                                         
+      133 -  .panel { position: static; max-height: none; }              
+      134 -  .grid-2 { grid-template-columns: minmax(0, 1fr); }          
+      135 -  .site-header { padding: 16px; }                             
+      297 +@media (min-width: 680px) {                                   
+      298 +  .layout { padding: 16px 24px 56px; }                        
+      299 +  .metrics { grid-template-columns: repeat(auto-fit, minmax(17
+          +0px, 1fr)); }                                                 
+      300 +  .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); 
+          +}                                                             
+      301 +  .sliders { grid-template-columns: repeat(2, minmax(0, 1fr));
+          + }                                                            
+      302 +  .grid-2 > .card:nth-child(2) { margin-top: 14px; }          
+      303  }
+      304 +                                                              
+      305 +@media (min-width: 1050px) {                                  
+      306 +  .layout { grid-template-columns: 340px minmax(0, 1fr); }    
+      307 +  .panel { position: sticky; top: 16px; align-self: start; max
+          +-height: calc(100vh - 32px); overflow-y: auto; }              
+      308 +  .sliders { grid-template-columns: repeat(3, minmax(0, 1fr));
+          + }                                                            
+      309 +  .process { flex-direction: row; flex-wrap: wrap; align-items
+          +: center; gap: 10px 14px; }                                   
+      310 +  .process .arrow { display: inline; }                        
+      311 +}                                                             
+      312 +                                                              
+      313 +@media (max-width: 679px) {                                   
+      314 +  .site-header { padding: 24px 16px 12px; }                   
+      315 +  .site-header h1, .subtitle, .tab h2, .tag { transform: none;
+          + }                                                            
+      316 +  .metric:nth-child(n) { transform: none; }                   
+      317 +  .card { padding: 16px; box-shadow: 2px 2px 0 rgba(56, 53, 47
+          +, 0.12); }                                                    
+      318 +  .tab p, .tab li { font-size: var(--dp-typography-detail); } 
+      319 +}                                                             
+      320 +                                                              
+      321 +@media (prefers-reduced-motion: reduce) {                     
+      322 +  *, *::before, *::after { transition: none !important; }     
+      323 +  button:hover, button:active, .file-btn:hover, .file-btn:acti
+          +ve { transform: none; }                                       
+      324 +}                                                             
+
+⏺ Now the font link and the hand-drawn underline in the header:
+
+⏺ Bash(cd "/Users/chenzhiheng/Desktop/中興電碩一上/物聯網/HW2" && python3 -
+      <<'EOF'
+      p='index.html'; s=open(p).read()…)
+  ⎿  (No output)
+
+⏺ Next, the charts and markup in app.js: pencil/blue/red chart palette,
+  handwritten chart fonts, the CRISP-DM process strip, and a yellow highlight on
+  the current method's comparison row.
+
+⏺ Bash(cd "/Users/chenzhiheng/Desktop/中興電碩一上/物聯網/HW2" && grep -n
+      "COLORS\|colorscale\|class=\"flow\"\|function table\|const body =
+      rows\|getComputedStyle\|cmpRows\|rgb…)
+  ⎿  (No output)
+
+⏺ Bash(cd "/Users/chenzhiheng/Desktop/中興電碩一上/物聯網/HW2" && sed -n 93,104p
+      assets/app.js && python3 - <<'EOF'
+      p='assets/app.js'; s=open(p).read()…)
+  ⎿  (No output)
+
+⏺ Two more edits: support a row class in the table helper, and wait for the
+  handwritten fonts before drawing the first charts so Plotly measures the right
+  glyphs.
+
+⏺ Bash(cd "/Users/chenzhiheng/Desktop/中興電碩一上/物聯網/HW2" && python3 -
+      <<'EOF'
+      p='assets/app.js'; s=open(p).read()…)
+  ⎿  (No output)
+⏺ Now I'll verify the rendered result at desktop and phone widths:
+
+⏺ Bash(cd "/Users/chenzhiheng/Desktop/中興電碩一上/物聯網/HW2" &&
+      S=/private/tmp/claude-501/-Users-chenzhiheng-Desktop------------HW2/31d69d
+      bd-56a7-4307-9f3a-247732253316/scrat…)
+  ⎿  (No output)
+  ⎿  (timeout 5m)
+
+  Read 2 files (ctrl+o to expand)
+
+⏺ Desktop looks right. The one defect is that chart legends now collide with the
+  x-axis titles, because the handwritten font is larger. I'll check mobile
+  before fixing it:
+
+  Read 2 files (ctrl+o to expand)
+
+⏺ Mobile stacks correctly and stays readable. Now the legend fix: legends anchor
+  to the bottom of the whole figure instead of the plot area. I'm also making
+  interval values a bit smaller on phones:
+
+⏺ Bash(cd "/Users/chenzhiheng/Desktop/中興電碩一上/物聯網/HW2" && python3 -
+      <<'EOF'
+      p='assets/app.js'; s=open(p).read()…)
+  ⎿  (No output)
+
+⏺ Bash(cd "/Users/chenzhiheng/Desktop/中興電碩一上/物聯網/HW2" && sed -i ''
+      "s/yaxis: { visible: false, range: \[-1, 1\] }, margin: { l: 30, r: 30, t:
+      40, b: 50 },/yaxis: { vis…)
+  ⎿  (No output)
+
+  Read 1 file (ctrl+o to expand)
+
+⏺ The legends are clear now. Last, I'll check the keyboard focus ring:
+
+⏺ Bash(cd /private/tmp/claude-501/-Users-chenzhiheng-Desktop------------HW2/31d6
+      9dbd-56a7-4307-9f3a-247732253316/scratchpad && ls -la s_focus.png)
+  ⎿  (No output)
+
+⏺ Bash(S=/private/tmp/claude-501/-Users-chenzhiheng-Desktop------------HW2/31d69
+      dbd-56a7-4307-9f3a-247732253316/scratchpad && "/Applications/Google
+      Chrome.app/Contents…)
+  ⎿  (No output)
+
+  Read 1 file (ctrl+o to expand)
+
+⏺ The dashed blue focus ring shows. Cleaning up the test harness and server:
+
+⏺ Bash(cd "/Users/chenzhiheng/Desktop/中興電碩一上/物聯網/HW2" && rm _test.html
+      && pkill -f "http.server 8765"; ls)
+  ⎿  (No output)
+
+⏺ The site now has the hand-drawn "working sheet" style. I checked it in
+  headless Chrome at 1400px and at 390px phone width. The text, controls, tabs
+  and regression results are the same as before.
+
+  Fonts: The design's "Sketch Working Hand/Marker" fonts don't exist here, and
+  they wouldn't cover Chinese anyway. I used a readable handwritten pair from
+  Google Fonts instead: Kalam for Latin letters and numbers, and LXGW WenKai TC
+  (霞鶩文楷) for Chinese. Headings and numbers use the bold weight, reading text
+  the regular one. The original font names stay first in the font list, so
+  they'll be used if you ever add those files.
+
+  What changed:
+  - Header: the big handwritten title has a red hand-drawn underline. The
+    subtitle sits beside it as a slightly tilted note with a strip of yellow
+    tape.
+  - Colours and paper: warm paper with a faint grain, pencil-ink text, blue for
+    notes, red for actions and emphasis, yellow for highlights. All values come
+    from the design's colour list.
+  - Panels and cards: pale paper scraps with uneven corners and a small hard
+    shadow. The number boxes are tilted very slightly, and stop tilting on
+    phones.
+  - Buttons: uneven outline with a red offset shadow. Hover tilts the button a
+    little, and pressing pushes it down onto the page.
+  - Keyboard focus: a dashed blue outline on every control.
+  - CRISP-DM steps: a darker paper strip with circled numbers and arrows. It
+    runs across on wide screens and stacks on phones.
+  - Tables and labels: the active tab gets a red uneven underline, and section
+    headings have a yellow highlighter stroke. In the strategy comparison table,
+    the row for the current method is highlighted yellow.
+  - Charts: recoloured to match, with handwritten chart text. The first charts
+    are drawn after the fonts load, so the text lines up.
+  - Layout: one column below 680px, two-column chart groups from 680px, and the
+    side panel sits beside the content from 1050px.
+  - Reduced motion: button tilting and transitions are off. The hover shadow
+    change still shows.
+
+  Fixed while checking: with the larger font, chart legends overlapped the
+  x-axis titles. Legends now sit at the bottom of each chart. On phones, the
+  long interval values in the number boxes are a bit smaller.
+
+  The changes are in assets/style.css, index.html (font link and the drawn
+  underline) and assets/app.js (chart colours and fonts, the step strip and the
+  highlighted row).
+
+❯ 網站風格沒有動誒，你只有在大標題放了個波浪
+
+⏺ A big wave under the title with the rest of the page unchanged points to a
+  stale cache: your browser got the new index.html (which added the wave SVG)
+  but is still using the old cached style.css. Without the new CSS, the wave has
+  no size limit, so it renders large. I'll check whether you've already pushed
+  to GitHub:
+
+⏺ Bash(cd "/Users/chenzhiheng/Desktop/中興電碩一上/物聯網/HW2" && git status -sb
+      2>&1 | head -5; git remote -v 2>&1 | head -2; git log --oneline -3 2>&1;
+      head -5 assets/style.c…)
+  ⎿  (No output)
+
+⏺ Since the folder still isn't a git repo, you're viewing it locally and the new
+  style.css is already saved. I'll now add version numbers to the CSS/JS links
+  so the browser fetches the updated files instead of cached ones.
+
+⏺ Bash(cd "/Users/chenzhiheng/Desktop/中興電碩一上/物聯網/HW2" && sed -i ''
+      's|href="assets/style.css"|href="assets/style.css?v=2"|;
+      s|src="assets/stats.js"|src="assets/stats.j…)
+  ⎿  (No output)
+
+⏺ The style files on disk are already the new version; your browser was most
+  likely still using the old cached style.css. That's why the big wave appeared:
+  index.html had loaded the new version with the wave, but without the new CSS
+  the wave has no size limit, so it shows up large. The screenshots I took in
+  headless Chrome showed the full restyle (warm paper, handwritten fonts,
+  red/blue marks, scrap-paper cards), so the files themselves are fine.
+
+  I added version numbers to the CSS/JS links in index.html (style.css?v=2 and
+  so on), so the browser has to fetch the new files.
+
+  Please:
+  1. Reload with a hard refresh: Cmd + Shift + R on Mac.
+  2. If it still looks the same, make sure you're opening this folder
+     (HW2/index.html) through a local server (python3 -m http.server 8000, then
+     http://localhost:8000), not another copy.
+
+  If it's still wrong after that, send me a screenshot and I'll look at it.
+
+  When you change CSS/JS later, bump the number (?v=3). GitHub Pages also caches
+  files, so the same thing can happen after you deploy.
+
+❯ https://github.com/BlueET1/AIot-HW2-MLR-web-.git
+  幫我push 到這裡
+
+⏺ I'll check whether the GitHub repository already has content before pushing:
+
+⏺ Bash(cd "/Users/chenzhiheng/Desktop/中興電碩一上/物聯網/HW2" && git ls-remote
+      https://github.com/BlueET1/AIot-HW2-MLR-web-.git 2>&1 | head; cat
+      .gitignore; git config user.na…)
+  ⎿  Error: Exit code 1
+     .venv/
+     __pycache__/
+     *.pyc
+     .DS_Store
+
+⏺ The repo is empty and git isn't configured with a user name/email on this
+  machine. I'll set the author for this repo to your GitHub username BlueET1 and
+  account email, then commit and push.
+
+⏺ Bash(cd "/Users/chenzhiheng/Desktop/中興電碩一上/物聯網/HW2" && git init -q -b
+      main && git config user.name "BlueET1" && git config user.email
+      "a23144408@gmail.com" && git ad…)
+  ⎿  (No output)
+
+⏺ The push was rejected with HTTP 400, which often happens on a first push
+  larger than git's default HTTP buffer (about 2.4 MB here). I'll raise the
+  buffer for this repo and retry:
+
+⏺ Bash(cd "/Users/chenzhiheng/Desktop/中興電碩一上/物聯網/HW2" && git config
+      http.postBuffer 524288000 && git push -u origin main 2>&1 | tail -5)
+  ⎿  (file diff unavailable for this command)
+⏺ The push worked. I'll replace the placeholder site link in the README with the
+  real address, and check whether I can turn on GitHub Pages from here:
+
+⏺ Bash(cd "/Users/chenzhiheng/Desktop/中興電碩一上/物聯網/HW2" && sed -i ''
+      's|https://<你的 GitHub 帳號>.github.io/<repo
+      名稱>/|https://blueet1.github.io/AIot-HW2-MLR-web-/|' README…)
+  ⎿  (file diff unavailable for this command)
+
+⏺ Bash(cd "/Users/chenzhiheng/Desktop/中興電碩一上/物聯網/HW2" && git commit
+      -qam "README: add live site URL…)
+  ⎿  (No output)
+  ⎿  (timeout 2m)
+
+⏺ Pages is turned on. I'll wait for the first build to finish and confirm the
+  site loads:
+
+⏺ Bash(for i in $(seq 1 18); do s=$(gh api
+      repos/BlueET1/AIot-HW2-MLR-web-/pages/builds/latest --jq .status
+      2>/dev/null); echo "$s"; [ "$s" = built ] && break; [ "$s"…)
+  ⎿  (No output)
+  ⎿  (timeout 4m)
+
+⏺ The build is done. I'll load the live page in headless Chrome to confirm the
+  analysis actually runs:
+
+⏺ Bash(S=/private/tmp/claude-501/-Users-chenzhiheng-Desktop------------HW2/31d69
+      dbd-56a7-4307-9f3a-247732253316/scratchpad; "/Applications/Google
+      Chrome.app/Contents/M…)
+  ⎿  (No output)
+  ⎿  (timeout 2m)
+
+⏺ The project is on GitHub and the site is live on GitHub Pages. I opened the
+  live page in headless Chrome: it loads the data and finishes the analysis
+  ("已完成建模：2,928 筆樣本、20 個特徵，RFE 選出 14 個").
+
+  - Repository: https://github.com/BlueET1/AIot-HW2-MLR-web-
+  - Website: https://blueet1.github.io/AIot-HW2-MLR-web-/
+
+  What I did:
+  - Pushed the whole project to the main branch. .venv is excluded by
+    .gitignore.
+  - The first push failed with HTTP 400 because the push was larger than git's
+    default upload buffer. I raised the buffer for this repo only, and the retry
+    went through.
+  - Turned on GitHub Pages using the gh CLI, which is logged in as BlueET1, with
+    source main / (root).
+  - Replaced the placeholder site link at the top of README.md with the real
+    address, in a second commit.
+
+  This machine had no git user name or email configured, so I set them for this
+  repo only. Commits show as BlueET1 <a23144408@gmail.com>; tell me if you'd
+  prefer a different name.
+
+  Still to do:
+  1. Replace the NotebookLM summary with one you actually got from NotebookLM.
+     It's in ai() in assets/app.js and in the README.
+  2. Put the exported GPT chat PDF in the docs/ folder; the AI tab says it's
+     there.
+  3. After editing CSS/JS, bump the ?v=2 in index.html to ?v=3. Otherwise
+     browsers may keep the old cached file, as happened with the style earlier.
+
+  To update the site later, run git add . && git commit -m "..." && git push.
+  Pages redeploys automatically in about a minute.
+
+❯ 我要怎麼給 NotebookLM 網路解法研究摘要 ? 給我中文prompt
+
+⏺ NotebookLM only answers from the sources you add to a notebook, so first add
+  some web write-ups that solve the same problem, then give it the prompt.
+
+  Step 1: Add sources (5–10 is enough)
+
+  Create a new notebook and use 「探索來源」(Discover sources). Type:
+
+  WHO Life Expectancy dataset Kaggle multiple linear regression feature
+  selection
+
+  It will find related articles for you to add. You can also paste links via
+  新增來源 → 網站 (Add source → Website). Good search terms:
+
+  - kumarrajarshi life expectancy who regression notebook
+  - life expectancy WHO linear regression multicollinearity VIF
+  - life expectancy prediction Lasso RFE feature selection
+
+  Kaggle notebook pages sometimes don't import completely. Medium articles,
+  GitHub READMEs, and blog posts work more reliably.
+
+  Step 2: Prompt (paste it into the NotebookLM chat box)
+
+  請根據我提供的所有來源，針對「WHO Life Expectancy（全球預期壽命）資料集的多元
+  線性回歸分析」撰寫一份繁體中文研究摘要，用於大學作業報告。
+
+  要求：
+  1. 長度 200～300 字，以一段完整的段落呈現，不要條列。
+  2. 內容須涵蓋以下面向（若來源中有提到）：
+     -
+  各解法中對預期壽命影響最顯著的特徵（正相關與負相關各舉例），以及其係數方向
+     - 資料前處理的常見做法（缺失值處理、類別變數編碼、極端值或對數轉換）
+     - 共線性問題（哪些特徵之間高度相關、是否使用 VIF 檢查）
+     - 使用的特徵選擇方法（如 Lasso、RFE、逐步迴歸、相關係數篩選）及其效果
+     - 模型評估結果（R²、RMSE 等常見數值範圍）以及是否檢驗回歸假設
+  3. 最後用一句話總結這些網路解法的共通結論或不足之處。
+  4. 只根據來源內容撰寫，不要自行補充來源中沒有的數據；若各來源說法不一致，請指
+  出差異。
+  5. 在摘要後另外列出你主要引用的來源標題。
+
+  Step 3: Use the result
+
+  1. Copy NotebookLM's answer into the 【NotebookLM 摘要】 section of ai() in
+     assets/app.js, and into the NotebookLM section of README.md.
+  2. Take a screenshot of the NotebookLM page, or export it as a PDF. You can
+     put it in docs/ as proof that it came from NotebookLM.
+
+  Once you have the summary, paste it here and I'll put it in both places and
+  push it to GitHub.
+
+❯ /model sonnet
+  ⎿  Set model to claude-sonnet-5-5
+
+❯ <ide_opened_file>The user opened the file
+  /Users/chenzhiheng/Desktop/中興電碩一上/物聯網/HW2/notebooklm.md in the IDE.
+  This may or may not be related to the current task.</ide_opened_file>
+
+❯ @notebooklm.md  幫我更新到網站和readme上面
+  ⎿  Read notebooklm.md (3 lines)
+
+⏺ Bash(cd "/Users/chenzhiheng/Desktop/中興電碩一上/物聯網/HW2" && grep -n
+      "NotebookLM" assets/app.js README.md)
+  ⎿  (No output)
+
+⏺ Bash(cd "/Users/chenzhiheng/Desktop/中興電碩一上/物聯網/HW2" && sed -n 76,84p
+      README.md && sed -n 722,736p assets/app.js)
+  ⎿  (No output)
+
+⏺ I'll use the notebooklm.md text verbatim, just cleaning up stray spaces left
+  from removed citation numbers and converting markup like bold and (R^2) into
+  plain text, then apply this across the site, including the README. · summary
+
+⏺ Bash(cd "/Users/chenzhiheng/Desktop/中興電碩一上/物聯網/HW2" && python3 -
+      <<'EOF'
+      import re…)
+  ⎿  (No output)
+
+⏺ The text is in both places. I'll commit and push:
+
+⏺ Bash(cd "/Users/chenzhiheng/Desktop/中興電碩一上/物聯網/HW2" && git add -A &&
+      git status --short && git commit -q -m "Update NotebookLM summary on site
+      and README…)
+  ⎿  No matches found
+
+⏺ The push was rejected because the remote has commits I don't have, so nothing
+  was deployed (the 0 is the old file). I'll look at what's there before
+  merging:
+
+⏺ Bash(cd "/Users/chenzhiheng/Desktop/中興電碩一上/物聯網/HW2" && git fetch -q
+      && git log --oneline HEAD..origin/main && git diff --stat
+      HEAD...origin/main)
+  ⎿  (No output)
+
+⏺ Bash(cd "/Users/chenzhiheng/Desktop/中興電碩一上/物聯網/HW2" && git diff
+      HEAD...origin/main)
+  ⎿  (No output)
+
+⏺ The remote commit is a README edit made on GitHub, which touches the same area
+  as mine. I'll rebase my commit on top of it so their edit is kept:
+
+⏺ Bash(cd "/Users/chenzhiheng/Desktop/中興電碩一上/物聯網/HW2" && git pull
+      --rebase 2>&1 | tail -5; git status -sb | head -5)
+  ⎿  (No output)
+
+⏺ Bash(cd "/Users/chenzhiheng/Desktop/中興電碩一上/物聯網/HW2" && sed -n 1,8p
+      README.md && grep -c "插值法之差異" README.md && git push -q 2>&1 | tail
+      -2; for i in $(seq 1 15); do sl…)
+  ⎿  (No output)
+  ⎿  (timeout 4m)
+
+⏺ NotebookLM 摘要已更新到網站和 README，並已推上
+  GitHub。我在線上確認過，網站裡已經是新的摘要文字。
+
+  - 網站：AI 協助 / NotebookLM 分頁裡的 【NotebookLM 摘要】
+    已換成你的內容（assets/app.js）。
+  - README：同一段摘要也放進去了（README.md）。
+  - 文字處理：內容照 notebooklm.md 原文，只做兩個調整：
+    - 把引用編號被刪掉後留在中文字之間的多餘空白去掉，例如「插值法
+      之差異」改成「插值法之差異」。
+    - 把 **…** 和 \(R^2\) 這些標記改成純文字 R²。
+  - 快取版號：index.html 的版號改成 ?v=3，瀏覽器才會抓到新檔。
+
+  第一次推送被拒絕，因為你在 GitHub 上改過 README（那次叫 "Refine README content
+  and structure"）。我沒有強制覆蓋，而是把我的更新接在你的修改後面，所以你的修
+  改都保留了。
+
+  注意：你在 GitHub 上改過的
+  README，把「加分項目」的說明刪掉了（原本寫著下拉選單兩個 Problem 加 1 分、自訂
+  CSV 加 2 分）。評分標準有這兩項加分，如果你不是故意要拿掉，建議補回去；要的話
+  跟我說，我幫你加。
+
+  另外，README 裡還有 AI 對話 PDF 要放進 docs/ 這一項還沒做。
